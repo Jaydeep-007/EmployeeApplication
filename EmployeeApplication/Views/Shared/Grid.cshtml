@@ -1,0 +1,106 @@
+﻿@{
+    Layout = null;
+}
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Common;
+@model EmployeePagingInfo
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+<style>
+
+    .arrow {
+        display: inline-block;
+        height: 16px;
+        vertical-align: middle;
+        width: 16px;
+    }
+
+        .arrow.up {
+            background-image: url('/images/arrow-up.png');
+        }
+
+        .arrow.down {
+            background-image: url('/images/arrow-down.png');
+        }
+</style>
+
+<div class="container">
+
+    <h4>List of Employee</h4>
+    @using (Html.BeginForm("Grid", "Employee", FormMethod.Get, new { @id = "frmSearch" }))
+    {
+        <div class="row">
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                @Html.TextBoxFor(m => m.Search, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <input id="btnsubmit" class="btn btn-success" type="submit" value="Search" />
+                <input id="btnclear" class="btn btn-success" type="button" value="Clear" />
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12" style="margin-top: 25px">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr sortby="@Model.sortBy" pagesize="@Model.pageSize" isAsc="@Model.isAsc" search="@Model.Search"></tr>
+                    <tbody>
+                        @foreach (var employee in Model.Employees)
+                        {
+                            <tr>
+                                <td>
+                                        @employee.Id
+                                </td>
+                                <td>
+                                    @employee.EmployeeName
+                                </td>
+                                <td>
+                                    @employee.Email
+                                </td>
+                                <td>
+                                    @employee.Gender
+                                </td>
+                                <td>
+                                    @employee.DataOfJoining
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="3">
+                                @Html.PagedListPager((IPagedList)Model.Employees,
+             page => Url.Action("Grid", new
+             {
+                 page = page,
+                 sortby = Model.sortBy,
+                 Search =Model.Search
+             }),
+             PagedListRenderOptions.OnlyShowFivePagesAtATime)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnclear").click(function () {
+            window.location.href = window.location.href.split('?')[0];
+        });
+
+        $("#Search").blur(function () {
+            var value = $("#Search").val();
+            value = value.trim();
+            $("#Search").val(value);
+        });
+    });
+</script>
